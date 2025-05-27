@@ -1,41 +1,47 @@
-require('dotenv').config(); // Make sure this line is UNCOMMENTED
-
+require('dotenv').config(); // Load environment variables from .env file
 const express = require('express');
 const axios = require('axios');
 const app = express();
 
-// Set the port for the server. In cloud environments (like Theia/Gitpod),
-// the port is often provided via an environment variable.
-// We found that 3000 works with your proxy URL (minhnguyen1-3000), so setting it here.
 const PORT = process.env.PORT || 3000;
-// Listen on all available network interfaces, essential for cloud deployments.
-const HOST = '0.0.0.0';
+// Note: HOST = '0.0.0.0' is removed as per your request to use localhost in console log.
+// In cloud environments, the proxy usually handles internal routing from 'localhost' anyway.
 
-// Configure Pug as the templating engine
+// Access your HubSpot API key
+const PRIVATE_APP_ACCESS_TOKEN = process.env.HUBSPOT_ACCESS_TOKEN;
+
+// Make sure to add this line to parse incoming request bodies
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // For parsing application/json
+
+// Setup your Pug templating engine
 app.set('view engine', 'pug');
-// Set the directory where Pug templates are located
 app.set('views', './views');
 
-// Serve static files (like CSS) from the 'public' directory
+// Serve static files from the 'public' directory
+// Using __dirname + '/public' for explicit pathing, similar to previous working version
 app.use(express.static(__dirname + '/public'));
 
-// Middleware to parse URL-encoded bodies (from HTML forms)
-app.use(express.urlencoded({ extended: true }));
-// Middleware to parse JSON bodies (if you were receiving JSON)
-app.use(express.json());
+// Define the base URL for HubSpot API calls (important for custom objects)
+const HUBSPOT_API_BASE_URL = 'https://api.hubspot.com/crm/v3/objects';
+const CUSTOM_OBJECT_SCHEMA_API_URL = 'https://api.hubspot.com/crm/v3/schemas'; // Added as per your new structure
 
-// **************************************************************************
-// * IMPORTANT: Your PRIVATE_APP_ACCESS token is now loaded from .env.    *
-// * Do NOT hardcode it here.                                             *
-// **************************************************************************
-const PRIVATE_APP_ACCESS = process.env.HUBSPOT_ACCESS_TOKEN; // Loaded from your .env file
+// Define the name of your custom object in HubSpot. This is the API name!
+// IMPORTANT: You need to replace 'your_custom_object_api_name' with the actual
+// internal name (usually `p{your_portal_id}_{your_object_name_lowercase}`)
+// You can find this in HubSpot by going to Settings > Objects > Custom Objects,
+// clicking on your object, and looking at the "Internal name" in the details.
+const CUSTOM_OBJECT_API_NAME = 'p441853140_books'; // Updated with your specific custom object API name
 
-// IMPORTANT: Replace 'YOUR_CUSTOM_OBJECT_API_NAME_HERE' with the actual
-// internal name of your custom object from HubSpot (e.g., 'p12345678_book').
-const CUSTOM_OBJECT_API_NAME = 'p441853140_book'; // <--- UPDATE THIS!
-
-// Base URL for HubSpot CRM objects API
-const HUBSPOT_CRM_API_BASE = 'https://api.hubspot.com/crm/v3/objects';
+// Error handling middleware (optional but good practice)
+app.use((error, req, res, next) => {
+    res.status(error.status || 500);
+    res.render('error', {
+        title: 'Error',
+        message: error.message,
+        error: process.env.NODE_ENV === 'development' ? error : {}
+    });
+});
 
 
 // ROUTE 1: Homepage - Display existing custom object records
@@ -43,13 +49,12 @@ app.get('/', async (req, res) => {
     // HubSpot API endpoint to retrieve custom objects
     // The `properties` parameter is crucial to specify which custom properties you want to retrieve.
     // Make sure these match the INTERNAL API NAMES of your custom object properties.
-    // Example properties: 'name', 'author', 'genre', 'publication_date'
-    const customObjectApiUrl = `${HUBSPOT_CRM_API_BASE}/${CUSTOM_OBJECT_API_NAME}?properties=name,author,genre,publication_date`; // <--- UPDATE WITH YOUR ACTUAL PROPERTY INTERNAL NAMES
+    const customObjectApiUrl = `${HUBSPOT_API_BASE_URL}/${CUSTOM_OBJECT_API_NAME}?properties=name,author,genre,publication_date`;
 
     try {
         const response = await axios.get(customObjectApiUrl, {
             headers: {
-                Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                Authorization: `Bearer ${PRIVATE_APP_ACCESS_TOKEN}`,
                 'Content-Type': 'application/json'
             }
         });
@@ -88,72 +93,26 @@ app.post('/update-cobj', async (req, res) => {
 
     try {
         const response = await axios.post(
-            `${HUBSPOT_CRM_API_BASE}/${CUSTOM_OBJECT_API_NAME}`,
+            `${HUBSPOT_API_BASE_URL}/${CUSTOM_OBJECT_API_NAME}`,
             { properties: newRecordProperties },
             {
                 headers: {
-                    Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
+                    Authorization: `Bearer ${PRIVATE_APP_ACCESS_TOKEN}`,
                     'Content-Type': 'application/json'
                 }
             }
         );
-        console.log('Custom object record created:', response.data);
+        console.log('Custom object record created:', response.data); // Keep this log as it's useful for confirmation
         res.redirect('/'); // Redirect to the homepage after successful creation
     } catch (error) {
         console.error('Error creating custom object record:', error.response ? error.response.data : error.message);
-        // You might want to render an error page or send an an error message to the user
+        // You might want to render an error page or send an error message to the user
         res.status(500).send('Error creating custom object record.');
     }
 });
 
 
-/**
-* * This is sample code to give you a reference for how you should structure your calls.
-
-* * App.get sample
-app.get('/contacts', async (req, res) => {
-    const contacts = 'https://api.hubspot.com/crm/v3/objects/contacts';
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
-    }
-    try {
-        const resp = await axios.get(contacts, { headers });
-        const data = resp.data.results;
-        res.render('contacts', { title: 'Contacts | HubSpot APIs', data });
-    } catch (error) {
-        console.error(error);
-    }
-});
-
-* * App.post sample
-app.post('/update', async (req, res) => {
-    const update = {
-        properties: {
-            "favorite_book": req.body.newVal
-        }
-    }
-
-    const email = req.query.email;
-    const updateContact = `https://api.hubspot.com/crm/v3/objects/contacts/${email}?idProperty=email`;
-    const headers = {
-        Authorization: `Bearer ${PRIVATE_APP_ACCESS}`,
-        'Content-Type': 'application/json'
-    };
-
-    try {
-        await axios.patch(updateContact, update, { headers } );
-        res.redirect('back');
-    } catch(err) {
-        console.error(err);
-    }
-
-});
-*/
-
 // Start the server
-app.listen(PORT, HOST, () => {
-    console.log(`Server running on http://${HOST}:${PORT}`);
-    // For cloud environments, the actual access URL will be the proxy URL provided by the platform.
-    console.log(`Access your app via the provided proxy URL: https://minhnguyen1-${PORT}.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/`);
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });

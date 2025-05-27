@@ -5,6 +5,8 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title= title
     link(rel='stylesheet', href='/css/style.css')
+    // Link to Google Fonts for Inter, similar to HubSpot's font
+    link(href='https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap', rel='stylesheet')
   body
     .container
       h1= title
@@ -15,18 +17,48 @@ html(lang='en')
         table.custom-object-table
           thead
             tr
-              th Name
-              th Author
-              th Genre
-              th Publication Date
+              // Adding sortable-header class and sort-icon for styling
+              th.sortable-header
+                span Name
+                span.sort-icon
+                  // SVG for sort up/down arrows
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-up')
+                    path(d='M12 4.293l-6 6a1 1 0 001.414 1.414L12 7.121l4.586 4.586a1 1 0 001.414-1.414l-6-6z')
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-down')
+                    path(d='M12 19.707l6-6a1 1 0 00-1.414-1.414L12 16.879l-4.586-4.586a1 1 0 00-1.414 1.414l6 6z')
+
+              th.sortable-header
+                span Author
+                span.sort-icon
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-up')
+                    path(d='M12 4.293l-6 6a1 1 0 001.414 1.414L12 7.121l4.586 4.586a1 1 0 001.414-1.414l-6-6z')
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-down')
+                    path(d='M12 19.707l6-6a1 1 0 00-1.414-1.414L12 16.879l-4.586-4.586a1 1 0 00-1.414 1.414l6 6z')
+
+              th.sortable-header
+                span Genre
+                span.sort-icon
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-up')
+                    path(d='M12 4.293l-6 6a1 1 0 001.414 1.414L12 7.121l4.586 4.586a1 1 0 001.414-1.414l-6-6z')
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-down')
+                    path(d='M12 19.707l6-6a1 1 0 00-1.414-1.414L12 16.879l-4.586-4.586a1 1 0 00-1.414 1.414l6 6z')
+
+              th.sortable-header
+                span Publication Date
+                span.sort-icon
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-up')
+                    path(d='M12 4.293l-6 6a1 1 0 001.414 1.414L12 7.121l4.586 4.586a1 1 0 001.414-1.414l-6-6z')
+                  svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 24 24', fill='currentColor', class='sort-arrow-down')
+                    path(d='M12 19.707l6-6a1 1 0 00-1.414-1.414L12 16.879l-4.586-4.586a1 1 0 00-1.414 1.414l6 6z')
+
               // Add more table headers for your other custom properties here
           tbody
             each record in data
               tr
-                td= record.properties.name // Make sure 'name' matches your internal property name
-                td= record.properties.author // Make sure 'author' matches your internal property name
-                td= record.properties.genre // Make sure 'genre' matches your internal property name
-                td= record.properties.publication_date // Make sure 'publication_date' matches your internal property name
+                td= record.properties.name
+                td= record.properties.author
+                td= record.properties.genre
+                td= record.properties.publication_date
                 // Add more table cells for your other custom properties here
       else
         p No custom object records found.

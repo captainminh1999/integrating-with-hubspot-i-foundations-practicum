@@ -1,58 +1,215 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
-body, * {
-    font-family: 'Roboto', sans-serif;
+/* General Body and Container Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f5f8fa; /* Light gray background, similar to HubSpot */
     margin: 0;
-    padding: 0;
+    padding: 20px;
+    color: #333;
+    line-height: 1.6;
 }
 
+.container {
+    max-width: 960px;
+    margin: 40px auto;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Headings */
 h1 {
-    margin: 1rem;
+    color: #33475b; /* Dark blue-gray, HubSpot's primary text color */
+    font-size: 2.2em;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #e7e7e7;
+    padding-bottom: 15px;
 }
 
-.cards {
+/* Links */
+a {
+    color: #007a8c; /* HubSpot blue */
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+    color: #005f6b;
+    text-decoration: underline;
+}
+
+/* Table Styles (for homepage) */
+.custom-object-table {
+    width: 100%;
+    border-collapse: collapse; /* Keep collapse for standard behavior */
+    margin-top: 20px;
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures border-radius applies to inner elements */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    table-layout: fixed; /* Ensures columns have equal width and align content */
+}
+
+.custom-object-table thead {
+    background-color: #f2f5f8; /* Light header background */
+}
+
+.custom-object-table th {
+    padding: 12px 15px;
+    text-align: left;
+    color: #33475b;
+    font-weight: 600;
+    border-bottom: 1px solid #e7e7e7;
+    border-right: 1px solid #e7e7e7; /* Vertical line */
+    cursor: pointer; /* Indicate sortable */
+    position: relative; /* For positioning the sort icon absolutely */
+    box-sizing: border-box; /* Include padding and border in element's total width/height */
+    white-space: normal; /* Ensure text wraps */
+}
+
+/* Remove right border for the last header column */
+.custom-object-table th:last-child {
+    border-right: none;
+}
+
+.custom-object-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #e7e7e7;
+    border-right: 1px solid #e7e7e7; /* Vertical line */
+    color: #5d728c; /* Slightly lighter text for data */
+    text-align: left; /* Ensure text alignment matches headers */
+    word-wrap: break-word; /* Prevents long words from breaking layout */
+    box-sizing: border-box; /* Include padding and border in element's total width/height */
+    white-space: normal; /* Ensure text wraps */
+}
+
+/* Remove right border for the last data column */
+.custom-object-table td:last-child {
+    border-right: none;
+}
+
+.custom-object-table tbody tr:nth-child(even) {
+    background-color: #fcfdff; /* Subtle alternating row color */
+}
+
+.custom-object-table tbody tr:hover {
+    background-color: #eaf0f6; /* Hover effect for rows */
+}
+
+/* Sort Icon Styling */
+.sort-icon {
     display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
+    flex-direction: column;
+    position: absolute; /* Position absolutely within the th */
+    right: 10px; /* Adjust as needed for spacing from right edge */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+    opacity: 0.4; /* Default subtle opacity */
+    transition: opacity 0.2s ease-in-out;
 }
 
-.card {
-    flex-basis: 31%;
-    margin: 1rem 0.4rem;
-    padding: 1rem 0.4rem 2.5rem 0.4rem;
-    border: solid 1px lightgrey;
-    border-radius: 15px;
-    box-shadow: 3px 2px 6px lightgrey;
+/* Hide individual arrows by default */
+.sort-icon .sort-arrow-up,
+.sort-icon .sort-arrow-down {
+    width: 12px;
+    height: 12px;
+    color: #8c9fb2; /* Default arrow color */
+    display: block; /* Ensure they are displayed */
+    transition: color 0.2s ease-in-out;
 }
 
-.card__email {
-    font-size: 1rem;
+/* Hover effect on the header to show/highlight sort icon */
+.custom-object-table th:hover .sort-icon {
+    opacity: 1; /* Make icon fully visible on header hover */
 }
 
-.form-wrapper {
-    font-size: 18px;
-    max-width: 768px;
-    margin: 2rem auto;
-    padding: 2rem;
-    border: solid 1px lightgrey;
-    border-radius: 15px;
-    box-shadow: 3px 2px 6px lightgrey;
+/* Highlight individual arrows on hover over the header */
+.custom-object-table th:hover .sort-arrow-up {
+    color: #007a8c; /* HubSpot blue for active sort indicator */
+}
+.custom-object-table th:hover .sort-arrow-down {
+    color: #007a8c; /* HubSpot blue for active sort indicator */
 }
 
-label, input {
-    margin-top: 5px;
+/* Form Styles (for updates page) */
+form {
+    margin-top: 20px;
+}
+
+fieldset {
+    border: 1px solid #e7e7e7;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 25px;
+    background-color: #fcfdff;
+}
+
+legend {
+    font-size: 1.4em;
+    color: #33475b;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
     display: block;
-    font-size: inherit;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #33475b;
 }
 
-input[type="text"] {
-    padding: .25rem;
+input[type="text"],
+input[type="date"] {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #cbd6e2; /* Light gray border */
+    border-radius: 4px;
+    font-size: 1em;
+    color: #33475b;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-input[type="submit"] {
-    background-color: lightgrey;
+input[type="text"]:focus,
+input[type="date"]:focus {
+    border-color: #007a8c; /* HubSpot blue on focus */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 122, 140, 0.2); /* Light blue shadow on focus */
+}
+
+button[type="submit"] {
+    background-color: #ff7a59; /* HubSpot orange */
+    color: #ffffff;
+    padding: 12px 25px;
     border: none;
-    padding: .375rem 1rem;
-    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button[type="submit"]:hover {
+    background-color: #e66a4a; /* Darker orange on hover */
+    transform: translateY(-1px); /* Slight lift effect */
+}
+
+button[type="submit"]:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Basic error page styling */
+.error-message {
+    color: #e0444e; /* HubSpot red for errors */
+    background-color: #ffe8e8;
+    border: 1px solid #e0444e;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
 }
