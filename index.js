@@ -1,4 +1,5 @@
 require('dotenv').config(); // Make sure this line is UNCOMMENTED
+
 const express = require('express');
 const axios = require('axios');
 const app = express();
@@ -6,7 +7,7 @@ const app = express();
 // Set the port for the server. In cloud environments (like Theia/Gitpod),
 // the port is often provided via an environment variable.
 // We found that 3000 works with your proxy URL (minhnguyen1-3000), so setting it here.
-const PORT = process.env.PORT || 3000; // Corrected to use 3000 or environment variable
+const PORT = process.env.PORT || 3000;
 // Listen on all available network interfaces, essential for cloud deployments.
 const HOST = '0.0.0.0';
 
@@ -24,30 +25,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // **************************************************************************
-// * WARNING: THIS IS FOR TEMPORARY TROUBLESHOOTING ONLY.                 *
-// * BEFORE FINAL SUBMISSION, YOU MUST REMOVE YOUR TOKEN FROM HERE        *
-// * AND USE A .env FILE AS PER HUBSPOT PRACTICUM INSTRUCTIONS.           *
+// * IMPORTANT: Your PRIVATE_APP_ACCESS token is now loaded from .env.    *
+// * Do NOT hardcode it here.                                             *
 // **************************************************************************
-// Replace 'YOUR_PRIVATE_APP_ACCESS_TOKEN_HERE' with your actual HubSpot Private App Access Token
-const PRIVATE_APP_ACCESS = process.env.HUBSPOT_ACCESS_TOKEN; 
-// Make sure your ACTUAL TOKEN IS NOT HARDCODED HERE
+const PRIVATE_APP_ACCESS = process.env.HUBSPOT_ACCESS_TOKEN; // Loaded from your .env file
+
 // IMPORTANT: Replace 'YOUR_CUSTOM_OBJECT_API_NAME_HERE' with the actual
-// internal name of your custom object from HubSpot.
-// Example: If your custom object is "Books" and your portal ID is 12345678,
-// it might be 'p12345678_book' or 'p12345678_books'.
-const CUSTOM_OBJECT_API_NAME = 'p441853140_book';
+// internal name of your custom object from HubSpot (e.g., 'p12345678_book').
+const CUSTOM_OBJECT_API_NAME = 'p441853140_book'; // <--- UPDATE THIS!
 
 // Base URL for HubSpot CRM objects API
 const HUBSPOT_CRM_API_BASE = 'https://api.hubspot.com/crm/v3/objects';
 
 
-// TODO: ROUTE 1 - Create a new app.get route for the homepage to call your custom object data.
-// Pass this data along to the front-end and create a new pug template in the views folder.
-// * Code for Route 1 goes here
+// ROUTE 1: Homepage - Display existing custom object records
 app.get('/', async (req, res) => {
     // HubSpot API endpoint to retrieve custom objects
     // The `properties` parameter is crucial to specify which custom properties you want to retrieve.
-    // Make sure these match the internal names of your properties.
+    // Make sure these match the INTERNAL API NAMES of your custom object properties.
     // Example properties: 'name', 'author', 'genre', 'publication_date'
     const customObjectApiUrl = `${HUBSPOT_CRM_API_BASE}/${CUSTOM_OBJECT_API_NAME}?properties=name,author,genre,publication_date`; // <--- UPDATE WITH YOUR ACTUAL PROPERTY INTERNAL NAMES
 
@@ -70,9 +65,7 @@ app.get('/', async (req, res) => {
 });
 
 
-// TODO: ROUTE 2 - Create a new app.get route for the form to create or update new custom object data.
-// Send this data along in the next route.
-// * Code for Route 2 goes here
+// ROUTE 2: Form to create or update custom object data
 app.get('/update-cobj', (req, res) => {
     res.render('updates', {
         title: 'Update Custom Object Form | Integrating With HubSpot I Practicum'
@@ -80,18 +73,16 @@ app.get('/update-cobj', (req, res) => {
 });
 
 
-// TODO: ROUTE 3 - Create a new app.post route for the custom objects form to create or update your custom object data.
-// Once executed, redirect the user to the homepage.
-// * Code for Route 3 goes here
+// ROUTE 3: Handle form submission to create a new custom object record
 app.post('/update-cobj', async (req, res) => {
     // Collect form data from req.body.
     // The keys (e.g., req.body.name, req.body.author) must match the 'name' attributes in your updates.pug form.
-    // The values are the internal names of your HubSpot custom object properties.
+    // The values should be the INTERNAL API NAMES of your HubSpot custom object properties.
     const newRecordProperties = {
-        name: req.body.name, // Make sure 'name' here matches the 'name' attribute in your input AND your custom object's internal property name for "Name"
-        author: req.body.author, // Same for author
-        genre: req.body.genre,   // Same for genre
-        publication_date: req.body.publication_date // Example for a date field
+        name: req.body.name, // Make sure 'name' matches your custom object's internal property name for "Name"
+        author: req.body.author, // Match your 'author' internal property name
+        genre: req.body.genre,   // Match your 'genre' internal property name
+        publication_date: req.body.publication_date // Example: Match your 'publication_date' internal property name
         // Add all other custom properties from your form here, matching their internal HubSpot names
     };
 
@@ -110,7 +101,7 @@ app.post('/update-cobj', async (req, res) => {
         res.redirect('/'); // Redirect to the homepage after successful creation
     } catch (error) {
         console.error('Error creating custom object record:', error.response ? error.response.data : error.message);
-        // You might want to render an error page or send an error message to the user
+        // You might want to render an error page or send an an error message to the user
         res.status(500).send('Error creating custom object record.');
     }
 });
