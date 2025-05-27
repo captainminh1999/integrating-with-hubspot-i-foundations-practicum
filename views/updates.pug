@@ -1,0 +1,35 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/style.css')
+  body
+    .container
+      h1= title
+      p
+        a(href='/') Return to the homepage
+
+      form(action='/update-cobj', method='POST')
+        fieldset
+          legend Create New Custom Object Record
+          div.form-group
+            label(for='name') Name (e.g., Title):
+            // IMPORTANT: 'name' attribute should match your custom object's internal property name for 'Name'
+            input(type='text', id='name', name='name', required)
+          div.form-group
+            label(for='author') Author:
+            // IMPORTANT: 'author' attribute should match your custom object's internal property name for 'Author'
+            input(type='text', id='author', name='author')
+          div.form-group
+            label(for='genre') Genre:
+            // IMPORTANT: 'genre' attribute should match your custom object's internal property name for 'Genre'
+            input(type='text', id='genre', name='genre')
+          // Add more fields here for your other custom properties, following the same pattern
+          // For example, if you have a 'publication_date' field:
+          div.form-group
+            label(for='publication_date') Publication Date:
+            input(type='date', id='publication_date', name='publication_date')
+
+          button(type='submit') Create Record
