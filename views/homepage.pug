@@ -1,0 +1,32 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title= title
+    link(rel='stylesheet', href='/css/style.css')
+  body
+    .container
+      h1= title
+      p
+        a(href='/update-cobj') Add to this table
+
+      if data && data.length > 0
+        table.custom-object-table
+          thead
+            tr
+              th Name
+              th Author
+              th Genre
+              th Publication Date
+              // Add more table headers for your other custom properties here
+          tbody
+            each record in data
+              tr
+                td= record.properties.name // Make sure 'name' matches your internal property name
+                td= record.properties.author // Make sure 'author' matches your internal property name
+                td= record.properties.genre // Make sure 'genre' matches your internal property name
+                td= record.properties.publication_date // Make sure 'publication_date' matches your internal property name
+                // Add more table cells for your other custom properties here
+      else
+        p No custom object records found.
